@@ -1,5 +1,5 @@
 const Header = (props) => <h1>{props.course}</h1>;
-// Exercise 1.2
+
 const Part = (props) => {
   return (
     <p>
@@ -8,7 +8,6 @@ const Part = (props) => {
   );
 };
 
-// Exercise 1.1
 const Content = (props) => {
   const { parts } = props;
   return (
