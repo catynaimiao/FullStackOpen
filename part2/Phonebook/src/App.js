@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import personService from "./services/phone";
 
 const Filter = ({ condition, handleConditionChange }) => {
   return (
@@ -32,14 +33,15 @@ const PersonForm = ({
   );
 };
 
-const Persons = ({ persons }) => {
+const Persons = ({ persons, handleDelete }) => {
   return (
     <div>
       {persons.map((person) => (
         <p key={person.name}>
           <b>
             {person.name} {person.number}
-          </b>
+          </b>{" "}
+          <button onClick={handleDelete(person.id, person.name)}>delete</button>
         </p>
       ))}
     </div>
@@ -53,9 +55,8 @@ const App = () => {
   const [condition, setCondition] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      const persons = response.data;
-      setPersons(persons);
+    personService.getAll().then((initializePersons) => {
+      setPersons(initializePersons);
     });
   }, []);
 
@@ -71,6 +72,14 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
+  const handleDelete = (id, name) => () => {
+    if (window.confirm(`Delete ${name} ?`)) {
+      personService.delete(id).then(() => {
+        setPersons(persons.filter((person) => person.id !== id));
+      });
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (
@@ -78,12 +87,29 @@ const App = () => {
         (person) => person.name.toLowerCase() === newName.toLowerCase()
       )
     ) {
-      alert(`${newName} is already added to Numberbook`);
+      if (
+        window.confirm(
+          `${newName} is already added to Numberbook,replace the old number with a new one?`
+        )
+      ) {
+        const newPerson = { name: newName, number: newNumber };
+        const id = persons.filter(
+          (person) => person.name.toLowerCase() === newName.toLowerCase()
+        )[0].id;
+        personService.update(id, newPerson).then((data) => {
+          setPersons(
+            persons.map((person) => (person.id !== id ? person : data))
+          );
+        });
+      }
     } else {
-      setPersons(persons.concat({ name: newName, number: newNumber }));
+      const newPerson = { name: newName, number: newNumber };
+      personService.create(newPerson).then((data) => {
+        setPersons(persons.concat(data));
+        setNewName("");
+        setNewNumber("");
+      });
     }
-    setNewName("");
-    setNewNumber("");
   };
 
   const persons2show = persons.filter((person) =>
@@ -106,7 +132,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons2show} />
+      <Persons persons={persons2show} handleDelete={handleDelete} />
     </div>
   );
 };
