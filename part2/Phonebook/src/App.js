@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import personService from "./services/phone";
 
 const Filter = ({ condition, handleConditionChange }) => {
@@ -48,11 +47,21 @@ const Persons = ({ persons, handleDelete }) => {
   );
 };
 
+const Notification = ({ message, errstate }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className={errstate}>{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [condition, setCondition] = useState("");
+  const [message, setMessage] = useState("some error happened...");
+  const [errstate, setErrstate] = useState("");
 
   useEffect(() => {
     personService.getAll().then((initializePersons) => {
@@ -72,11 +81,22 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
+  const setNotation = (message, errstate) => {
+    setMessage(message);
+    setErrstate(errstate);
+  };
+
   const handleDelete = (id, name) => () => {
     if (window.confirm(`Delete ${name} ?`)) {
-      personService.delete(id).then(() => {
-        setPersons(persons.filter((person) => person.id !== id));
-      });
+      personService
+        .delete(id)
+        .then(() => {
+          setPersons(persons.filter((person) => person.id !== id));
+          setNotation(`${name} has been deleted`, "success");
+        })
+        .catch((err) => {
+          setNotation(`${name} has been deleted`, "error");
+        });
     }
   };
 
@@ -96,11 +116,20 @@ const App = () => {
         const id = persons.filter(
           (person) => person.name.toLowerCase() === newName.toLowerCase()
         )[0].id;
-        personService.update(id, newPerson).then((data) => {
-          setPersons(
-            persons.map((person) => (person.id !== id ? person : data))
-          );
-        });
+        personService
+          .update(id, newPerson)
+          .then((data) => {
+            setNotation(
+              `You have updated the new person ${newName}`,
+              "success"
+            );
+            setPersons(
+              persons.map((person) => (person.id !== id ? person : data))
+            );
+          })
+          .catch((error) => {
+            setNotation(`error occured ${error}`, "error");
+          });
       }
     } else {
       const newPerson = { name: newName, number: newNumber };
@@ -108,6 +137,7 @@ const App = () => {
         setPersons(persons.concat(data));
         setNewName("");
         setNewNumber("");
+        setNotation(`You have added ${newName}`, "success");
       });
     }
   };
@@ -119,6 +149,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} errstate={errstate} />
       <Filter
         condition={condition}
         handleConditionChange={handleConditionChange}
