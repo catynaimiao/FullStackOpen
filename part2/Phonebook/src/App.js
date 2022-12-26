@@ -1,59 +1,10 @@
 import { useState, useEffect } from "react";
 import personService from "./services/phone";
+import Notification from "./components/Notification";
+import Persons from "./components/Persons";
+import PersonForm from "./components/PersonForm";
+import Filter from "./components/Filter"
 
-const Filter = ({ condition, handleConditionChange }) => {
-  return (
-    <div>
-      filter shown with:
-      <input value={condition} onChange={handleConditionChange} />
-    </div>
-  );
-};
-
-const PersonForm = ({
-  newName,
-  newNumber,
-  handleNameChange,
-  handleNumberChange,
-  handleSubmit,
-}) => {
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        name: <input value={newName} onChange={handleNameChange} />
-      </div>
-      <div>
-        number: <input value={newNumber} onChange={handleNumberChange} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  );
-};
-
-const Persons = ({ persons, handleDelete }) => {
-  return (
-    <div>
-      {persons.map((person) => (
-        <p key={person.name}>
-          <b>
-            {person.name} {person.number}
-          </b>{" "}
-          <button onClick={handleDelete(person.id, person.name)}>delete</button>
-        </p>
-      ))}
-    </div>
-  );
-};
-
-const Notification = ({ message, errstate }) => {
-  if (message === null) {
-    return null;
-  }
-
-  return <div className={errstate}>{message}</div>;
-};
 
 const App = () => {
   const [persons, setPersons] = useState([]);
