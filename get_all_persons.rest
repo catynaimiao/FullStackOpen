@@ -1,0 +1,14 @@
+GET http://localhost:3001/api/persons
+
+###
+GET http://localhost:3001/api/persons/1 HTTP/1.1
+
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+    "name":"Horry Poter2",
+    "number":"12-1234222123"
+}
+###
