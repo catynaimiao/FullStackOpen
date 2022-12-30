@@ -3,10 +3,12 @@
 # dependencies
 node_modules
 server
+fullstack
 app
 rest
 /.pnp
 .pnp.js
+.env
 
 # testing
 /coverage

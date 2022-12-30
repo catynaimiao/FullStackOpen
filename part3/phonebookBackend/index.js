@@ -1,7 +1,10 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
+app.use(express.static("build"));
 app.use(express.json());
 
 morgan.token("body", (req) => JSON.stringify(req.body));
@@ -34,6 +37,7 @@ let persons = [
 ];
 
 app.get("/api/persons", (request, response) => {
+  console.log("yep");
   response.send(persons);
 });
 
