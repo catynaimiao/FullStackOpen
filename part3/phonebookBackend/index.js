@@ -20,25 +20,11 @@ app.use(
 
 app.get("/api/persons", (request, response) => {
   Person.find({}).then((result) => {
-    persons = result;
     response.json(result);
   });
 });
 
-/*
-const generateId = () => {
-  const randInt = () => {
-    return Math.floor(Math.random() * 1000);
-  };
-  let Id = randInt();
-  while (persons.find((person) => person.id === Id)) {
-    Id = randInt();
-  }
-  return Id;
-};
-*/
-
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
   if (!body.name) {
@@ -74,7 +60,7 @@ app.post("/api/persons", (request, response) => {
 });
 
 app.get("/info", (request, response) => {
-  let info = `<p>Phonebook has info for ${persons.length} people</p>`;
+  let info = `<p>Phonebook has info for people</p>`;
   info += `<p>${new Date()}</p>`;
   response.send(info);
 });
@@ -93,7 +79,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
@@ -107,7 +93,11 @@ app.put("/api/persons/:id", (request, response, next) => {
     number: body.number,
   };
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedNote) => {
       response.json(updatedNote);
     })
@@ -125,6 +115,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
   next(error);
 };
