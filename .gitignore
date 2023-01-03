@@ -6,6 +6,7 @@ server
 fullstack
 app
 rest
+temp
 /.pnp
 .pnp.js
 .env
