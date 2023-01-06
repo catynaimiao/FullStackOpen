@@ -3,6 +3,7 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const { loginJson } = require("../utils/config");
 
 const initialBlogs = [
   {
@@ -19,12 +20,22 @@ const initialBlogs = [
   },
 ];
 
+let loggedInToken = null;
+
 beforeEach(async () => {
+  api
+  .post("/api/login")
+  .send(loginJson)
+  .end((err, response) => {
+    loggedInToken = "bearer " + response.body.token;
+  });
+
   await Blog.deleteMany({});
   let blogObject = new Blog(initialBlogs[0]);
   await blogObject.save();
   blogObject = new Blog(initialBlogs[1]);
   await blogObject.save();
+
 });
 
 describe("api integration test", () => {
@@ -68,11 +79,14 @@ describe("api integration test", () => {
       likes: 0,
     };
 
+    console.log(loggedInToken);
+
     await api
       .post("/api/blogs")
+      .set("Authorization", loggedInToken)
       .send(newBlog)
-      .expect(201)
-      .expect("Content-Type", /application\/json/);
+      .expect("Content-Type", /application\/json/)
+      .expect(201);
 
     const response = await api.get("/api/blogs");
 
@@ -87,7 +101,11 @@ describe("api integration test", () => {
       title: "TDD harms architecture",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", loggedInToken)
+      .send(newBlog)
+      .expect(400);
 
     const response = await api.get("/api/blogs");
 
@@ -102,8 +120,15 @@ describe("api integration test", () => {
       likes: 0,
     };
 
-    const response = await api.post("/api/blogs").send(newBlog).expect(201);
-    await api.delete(`/api/blogs/${response.body.id}`).expect(204);
+    const response = await api
+      .post("/api/blogs")
+      .set("Authorization", loggedInToken)
+      .send(newBlog)
+      .expect(201);
+    await api
+      .delete(`/api/blogs/${response.body.id}`)
+      .set("Authorization", loggedInToken)
+      .expect(204);
   });
 
   test("updating the information of an individual blog post", async () => {
@@ -114,7 +139,11 @@ describe("api integration test", () => {
       likes: 0,
     };
 
-    const response = await api.post("/api/blogs").send(initialBlog).expect(201);
+    const response = await api
+      .post("/api/blogs")
+      .set("Authorization", loggedInToken)
+      .send(initialBlog)
+      .expect(201);
 
     const initialUpdateBlog = {
       title: "TDD harms architecture",
@@ -126,11 +155,13 @@ describe("api integration test", () => {
     const verifyBlog = {
       ...initialUpdateBlog,
       id: response.body.id,
+      user: response.body.user,
     };
 
     await api
       .put(`/api/blogs/${response.body.id}`)
       .send(initialUpdateBlog)
+      .set("Authorization", loggedInToken)
       .expect(200);
 
     const updateResponse = await api
