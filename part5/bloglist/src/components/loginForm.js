@@ -1,5 +1,10 @@
-const LoginForm = (props) => {
-  const { handleLogin, username, setUsername, password, setPassword } = props;
+const LoginForm = ({
+  handleLogin,
+  username,
+  setUsername,
+  password,
+  setPassword,
+}) => {
   return (
     <div>
       <form onSubmit={handleLogin}>
