@@ -3,6 +3,7 @@ import Blogs from "./components/Blogs";
 import LoginForm from "./components/LoginForm";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -12,29 +13,13 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  //blog
-  const [newTitle, setNewTitle] = useState("");
-  const [newAuthor, setNewAuthor] = useState("");
-  const [newUrl, setNewUrl] = useState("");
   //message
   const [callbackMessage, setCallbackMessage] = useState(null);
 
-  const addBlog = async (event) => {
-    event.preventDefault();
-
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    };
-
+  const addBlog = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject);
-      setBlogs(blogs.concat(returnedBlog));
-      setNewTitle("");
-      setNewAuthor("");
-      setNewUrl("");
-
+      setBlogs(blogs.concat(returnedBlog).sort((a, b) => b.likes - a.likes));
       setCallbackMessage({
         type: "success",
         content: `a new blog ${returnedBlog.title} by ${user.name} added`,
@@ -47,9 +32,51 @@ const App = () => {
     }
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const deleteBlog = async (blogId) => {
+    try {
+      await blogService.deleteBlog(blogId);
+      let blogTitle = "";
+      const newBlogs = blogs
+        .filter((blog) => blog.id !== blogId)
+        .sort((a, b) => b.likes - a.likes);
+      setBlogs(newBlogs);
+      setCallbackMessage({
+        type: "success",
+        content: ` blog ${blogTitle} deleted`,
+      });
+    } catch (error) {
+      setCallbackMessage({
+        type: "error",
+        content: error.message,
+      });
+    }
+  };
 
+  const likeClick = async (blogObject, blogId) => {
+    try {
+      const returnedBlog = await blogService.update(blogObject, blogId);
+      const updatedBlogs = blogs
+        .map((blog) => {
+          if (blog.id === blogId) {
+            return returnedBlog;
+          }
+          return blog;
+        })
+        .sort((a, b) => b.likes - a.likes);
+      setBlogs(updatedBlogs);
+      setCallbackMessage({
+        type: "success",
+        content: ` blog ${returnedBlog.title} by ${user.name} updated`,
+      });
+    } catch (error) {
+      setCallbackMessage({
+        type: "error",
+        content: error.message,
+      });
+    }
+  };
+
+  const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({ username, password });
       setUser(user);
@@ -80,7 +107,10 @@ const App = () => {
   };
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
+    console.log(blogs);
   }, []);
 
   useEffect(() => {
@@ -102,18 +132,12 @@ const App = () => {
             {user.name} logged in<button onClick={handleLogout}>logout</button>
           </div>
 
-          <BlogForm
-            addBlog={addBlog}
-            newTitle={newTitle}
-            setNewTitle={setNewTitle}
-            newAuthor={newAuthor}
-            setNewAuthor={setNewAuthor}
-            newUrl={newUrl}
-            setNewUrl={setNewUrl}
-          />
+          <Togglable buttonLabel="new blog">
+            <BlogForm addBlog={addBlog} />
+          </Togglable>
 
           <br />
-          <Blogs blogs={blogs} />
+          <Blogs blogs={blogs} likeClick={likeClick} deleteBlog={deleteBlog} />
         </div>
       ) : (
         <LoginForm
