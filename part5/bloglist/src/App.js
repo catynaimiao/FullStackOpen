@@ -110,7 +110,6 @@ const App = () => {
     blogService
       .getAll()
       .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-    console.log(blogs);
   }, []);
 
   useEffect(() => {
