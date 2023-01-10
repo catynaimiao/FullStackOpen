@@ -1,0 +1,13 @@
+### 所有用户
+GET http://localhost:3001/api/users
+
+### 添加用户
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+    "username":"root", 
+    "name":"admin", 
+    "password":"password"
+}
+### 

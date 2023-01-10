@@ -1,0 +1,32 @@
+POST http://localhost:3001/api/blogs
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYzYjdmMzJjZDNkYzFmM2QwY2UyYzM2YyIsImlhdCI6MTY3MzAwNjY2NiwiZXhwIjoxNjczMDEwMjY2fQ.I0UAW1TbQi0KCmPAh_W01IhgaRGTIK46NJxzsTINdtQ
+Content-Type: application/json
+
+{
+    "title":"test for new3",
+    "author":"test author",
+    "url":"www.baidu.com",
+    "likes":"1"
+}
+
+### 
+
+Delete http://localhost:3001/api/blogs/63b80e5bf8b3a3d6684a07ee
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYzYjdmMzJjZDNkYzFmM2QwY2UyYzM2YyIsImlhdCI6MTY3MzAwNjY2NiwiZXhwIjoxNjczMDEwMjY2fQ.I0UAW1TbQi0KCmPAh_W01IhgaRGTIK46NJxzsTINdtQ
+
+### 
+
+GET http://localhost:3001/api/blogs
+
+### 
+
+PUT http://localhost:3001/api/blogs/63b7f9d8225e482102b92fbe
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYzYjdmMzJjZDNkYzFmM2QwY2UyYzM2YyIsImlhdCI6MTY3MzAwNjY2NiwiZXhwIjoxNjczMDEwMjY2fQ.I0UAW1TbQi0KCmPAh_W01IhgaRGTIK46NJxzsTINdtQ
+Content-Type: application/json
+
+{
+    "title":"test",
+    "author":"test author",
+    "url":"www.baidu.com",
+    "likes":"16"
+}
