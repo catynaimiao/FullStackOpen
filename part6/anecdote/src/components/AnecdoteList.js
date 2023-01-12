@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   setNotification,
   clearNotification,
+  setTimeId,
 } from "../reducers/notificationReducer";
 import { voteById2Backend } from "../reducers/anecdoteReducer";
 
@@ -9,8 +10,9 @@ const AnecdoteList = () => {
   const state = useSelector((state) => ({
     allAnecdotes: state.anecdotes,
     filter: state.filter,
+    notificationTimeId: state.notification.timeId,
   }));
-  const { allAnecdotes, filter } = state;
+  const { allAnecdotes, filter, notificationTimeId } = state;
 
   const anecdotes = allAnecdotes.filter((anecdote) => {
     return anecdote.content.includes(filter);
@@ -22,9 +24,19 @@ const AnecdoteList = () => {
     const anecdote = anecdotes.find((anecdote) => anecdote.id === id);
     dispatch(voteById2Backend(anecdote));
     dispatch(setNotification(`you voted "${anecdote.content}"`));
-    setTimeout(() => {
-      dispatch(clearNotification());
-    }, 5000);
+
+    if (!notificationTimeId) {
+      let timeId = setTimeout(() => {
+        dispatch(clearNotification());
+      }, 5000);
+      dispatch(setTimeId(timeId));
+    } else {
+      clearTimeout(notificationTimeId);
+      let timeId = setTimeout(() => {
+        dispatch(clearNotification());
+      }, 5000);
+      dispatch(setTimeId(timeId));
+    }
   };
 
   return (
