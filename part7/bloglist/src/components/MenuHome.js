@@ -12,27 +12,28 @@ const MenuHome = () => {
     textDecoration: "none",
   };
   const Style = {
-    "textDecoration": "none",
+    textDecoration: "none",
   };
 
   return (
     <AppBar position="static">
       <Box sx={{ flexGrow: 1, display: "flex" }}>
-        <Link to="/" style={Style}>
-          <Button
-            key={"home"}
-            sx={{ mx: 2, my: 2, color: "white", display: "block" }}
-          >
+        <Link to="/blogs" style={Style}>
+          <Button sx={{ mx: 2, my: 2, color: "white", display: "block" }}>
             <Typography sx={linkStyle} variant="body1">
-              home
+              Blogs
+            </Typography>
+          </Button>
+        </Link>
+        <Link to="/users" style={Style}>
+          <Button sx={{ my: 2, color: "white", display: "block" }}>
+            <Typography sx={linkStyle} variant="body1">
+              Users
             </Typography>
           </Button>
         </Link>
         <Link to="/login" style={Style}>
-          <Button
-            key={"login"}
-            sx={{ my: 2, color: "white", display: "block" }}
-          >
+          <Button sx={{ my: 2, color: "white", display: "block" }}>
             <Typography sx={linkStyle} variant="body1">
               {!user ? "login" : "logout"}
             </Typography>

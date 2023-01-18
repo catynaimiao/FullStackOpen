@@ -1,5 +1,4 @@
-import { useMatch } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,6 +11,9 @@ import {
   Tooltip,
   IconButton,
   Badge,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,6 +21,8 @@ import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 import blogsService from "../../services/blogs";
 import { updateBlog, removeBlog } from "../../reducers/blog/blogReducer";
+
+import BlogcomponentForm from "./Blogcomponents";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -32,6 +36,20 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const style = {
   py: 1,
   px: 2,
+};
+
+const BlogComments = (props) => {
+  const comments = props.comments;
+
+  return (
+    <List>
+      {comments.map((item, id) => (
+        <ListItem key={id}>
+          <ListItemText primary={item} />
+        </ListItem>
+      ))}
+    </List>
+  );
 };
 
 const BlogInfo = (props) => {
@@ -80,15 +98,15 @@ const BlogInfo = (props) => {
   );
 };
 
-const Blog = () => {
-  const blogs = useSelector((data) => data.blogs);
-  const match = useMatch("/blogs/:id");
-  const blog = blogs.find((blog) => blog.id === match.params.id);
+const Blog = (props) => {
+  const blog = props.blog;
 
   return (
     <Box>
       <Container sx={{ mt: 2 }}>
         <Paper sx={style}>{blog ? <BlogInfo {...blog} /> : null}</Paper>
+        <BlogcomponentForm blog={blog} />
+        <Paper sx={style}>{blog ? <BlogComments {...blog} /> : null}</Paper>
       </Container>
     </Box>
   );
