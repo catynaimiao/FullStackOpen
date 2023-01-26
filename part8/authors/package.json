@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "dev": "nodemon index.js",
+    "run": "node index.js"
+  },
+  "dependencies": {
+    "apollo-server": "^3.10.1",
+    "graphql": "^16.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
