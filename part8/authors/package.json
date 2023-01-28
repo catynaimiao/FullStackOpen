@@ -4,7 +4,6 @@
     "run": "node index.js"
   },
   "dependencies": {
-    "apollo-server": "^3.10.1",
     "graphql": "^16.6.0",
     "uuid": "^9.0.0"
   },

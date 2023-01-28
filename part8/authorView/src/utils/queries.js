@@ -1,0 +1,57 @@
+import { gql } from "@apollo/client";
+
+export const ALL_AUTHORS = gql`
+  query {
+    allAuthors {
+      bookCount
+      born
+      id
+      name
+    }
+  }
+`;
+
+export const ALL_BOOKS = gql`
+  query allbooks {
+    allBooks {
+      author
+      genres
+      id
+      published
+      title
+    }
+  }
+`;
+
+export const ADD_BOOK = gql`
+  mutation addBook(
+    $title: String!
+    $author: String!
+    $published: Int!
+    $genres: [String!]!
+  ) {
+    addBook(
+      title: $title
+      author: $author
+      published: $published
+      genres: $genres
+    ) {
+      author
+      genres
+      published
+      title
+      id
+    }
+  }
+`;
+
+export const EDIT_AUTHOR = gql`
+  mutation editAuthor($name: String!, $setBornTo: Int!) {
+    editAuthor(name: $name, setBornTo: $setBornTo) {
+      bookCount
+      born
+      id
+      name
+    }
+  }
+`;
