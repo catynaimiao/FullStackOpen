@@ -13,7 +13,13 @@ const Query = {
     return Book.find({});
   },
   allAuthors: async (root, args) => {
-    return Author.find({});
+    const authors = await Author.find({});
+    const books = await Book.find({}).populate("author");
+    const allAuthors = authors.map((a) => {
+      a.bookCount = books.filter((b) => b.author.name === a.name).length;
+      return a;
+    });
+    return allAuthors;
   },
   bookCount: async (root, args) => {
     const counts = await Book.collection.countDocuments();
@@ -23,7 +29,6 @@ const Query = {
     if (!context.currentUser) {
       throw new AuthenticationError("not authenticated");
     }
-    console.log(context.currentUser);
     return Book.find({ genres: context.currentUser.favouriteGenre });
   },
   me: (root, args, context) => {
@@ -48,7 +53,7 @@ const Mutation = {
       newBook = await newBook.save();
 
       pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
-      
+
       return newBook;
     } catch (error) {
       throw new UserInputError(error.message, {
@@ -104,12 +109,6 @@ const Mutation = {
 const resolvers = {
   Query,
   Mutation,
-  Author: {
-    bookCount: async (root, args) => {
-      const count = await Book.find({ author: root.id });
-      return count.length;
-    },
-  },
   Book: {
     author: async (root, args) => {
       let author = await Author.findById(root.author);
