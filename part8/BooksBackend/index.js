@@ -16,17 +16,17 @@ const typeDefs = require("./utils/typeDefs");
 const resolvers = require("./utils/resolvers");
 const User = require("./models/User");
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(() => {
-    console.log("connected to MongoDB");
-  })
-  .catch((error) => {
-    console.log("error connection to MongoDB:", error.message);
-  });
-
 // setup is now within a function
 const start = async () => {
+  await mongoose
+    .connect(MONGODB_URI)
+    .then(() => {
+      console.log("connected to MongoDB");
+    })
+    .catch((error) => {
+      console.log("error connection to MongoDB:", error.message);
+    });
+
   const app = express();
   const httpServer = http.createServer(app);
 
