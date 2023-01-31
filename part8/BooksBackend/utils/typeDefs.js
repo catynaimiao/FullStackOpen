@@ -45,6 +45,10 @@ const typeDefs = gql`
     ): Book!
     editAuthor(name: String!, setBornTo: Int!): Author
   }
+
+  type Subscription {
+    bookAdded: Book!
+  }
 `;
 
 module.exports = typeDefs;

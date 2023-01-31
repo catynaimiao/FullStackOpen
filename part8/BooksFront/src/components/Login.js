@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { LOGIN } from "../utils/queries";
 import { useField } from "../utils/commonHooks";
-import { BOOK_BY_GENRE } from "../utils/queries";
 
 const Login = (props) => {
   const { clearValue: clearUsername, ...username } = useField("text");

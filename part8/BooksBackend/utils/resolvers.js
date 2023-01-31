@@ -5,6 +5,9 @@ const Author = require("../models/Author");
 const User = require("../models/User");
 const { SECRET } = require("../utils/config");
 
+const { PubSub } = require("graphql-subscriptions");
+const pubsub = new PubSub();
+
 const Query = {
   allBooks: async (root, args) => {
     return Book.find({});
@@ -43,6 +46,9 @@ const Mutation = {
       }
       let newBook = new Book({ ...args, author });
       newBook = await newBook.save();
+
+      pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
+      
       return newBook;
     } catch (error) {
       throw new UserInputError(error.message, {
@@ -118,6 +124,11 @@ const resolvers = {
         name: author.name,
         born: author.born,
       };
+    },
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator("BOOK_ADDED"),
     },
   },
 };
