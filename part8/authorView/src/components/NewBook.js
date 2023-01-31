@@ -29,6 +29,9 @@ const NewBook = (props) => {
         genres: genres,
       },
       refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+      update: (cache, response) => {
+        console.log(response.data);
+      },
     });
 
     clearTitle();

@@ -28,6 +28,7 @@ const typeDefs = gql`
 
   type Query {
     allBooks: [Book!]!
+    bookByGenre: [Book!]!
     allAuthors: [Author!]!
     bookCount: Int!
     me: User!

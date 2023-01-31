@@ -1,6 +1,6 @@
 const Book = require("../models/Book");
 const jwt = require("jsonwebtoken");
-const { UserInputError } = require("apollo-server");
+const { UserInputError, AuthenticationError } = require("apollo-server");
 const Author = require("../models/Author");
 const User = require("../models/User");
 const { SECRET } = require("../utils/config");
@@ -15,6 +15,13 @@ const Query = {
   bookCount: async (root, args) => {
     const counts = await Book.collection.countDocuments();
     return counts;
+  },
+  bookByGenre: async (root, args, context) => {
+    if (!context.currentUser) {
+      throw new AuthenticationError("not authenticated");
+    }
+    console.log(context.currentUser);
+    return Book.find({ genres: context.currentUser.favouriteGenre });
   },
   me: (root, args, context) => {
     return context.currentUser;

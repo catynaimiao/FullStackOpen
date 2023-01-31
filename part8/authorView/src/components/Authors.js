@@ -4,6 +4,7 @@ import EditBirth from "../components/EditBirth";
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS);
+  const token = localStorage.getItem("books-user-token");
 
   if (!props.show || result.loading) {
     return null;
@@ -17,7 +18,7 @@ const Authors = (props) => {
       <table>
         <tbody>
           <tr>
-            <th></th>
+            <th>name</th>
             <th>born</th>
             <th>books</th>
           </tr>
@@ -30,7 +31,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <EditBirth authors={authors} />
+      {token ? <EditBirth authors={authors} /> : null}
     </div>
   );
 };
