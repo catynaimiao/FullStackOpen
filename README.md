@@ -1,8 +1,10 @@
 # FullStackOpen Course
 
+[course site](https://fullstackopen.com/en/)
+
 ## The repository
 
-This is the repository whic maintains my own exercises' answers and notes. The forders whose name prefixed *part* are the specific part's exercise.
+This is the repository which maintains my own exercises' answers and notes. The forders whose name prefixed *part* are the specific part's exercise.
 And the folder *Notes* is storing notes I had written.
 
 ## The course
